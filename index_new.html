@@ -1,0 +1,158 @@
+<meta charset="UTF-8">
+<script src="js-yaml.min.js"></script>
+<script src="jquery.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	window.fin=0;
+	$.getJSON("http://127.0.0.1/usbc-instruction/minecrafticon.json",function(data){
+		window.micon=data;
+		window.fin++;
+		par();
+	})
+	$.get("http://127.0.0.1/usbc-instruction/challenges.yml",function(data){
+		var doc=jsyaml.load(data);
+		window.doc=doc;
+		window.fin++;
+		par();
+	})
+	$.get("http://127.0.0.1/usbc-instruction/zh_CN.lang",function(data){
+		window.zhcn=data;
+		window.fin++;
+		par();
+	})
+	$.get("http://127.0.0.1/usbc-instruction/en_US.lang",function(data){
+		window.enus=data;
+		window.fin++;
+		par();
+	})
+	$.get("http://127.0.0.1/usbc-instruction/ids.csv",function(data){
+		window.ids=data;
+		window.fin++;
+		par();
+	})
+	function par(){
+		if(window.fin>=5){
+
+			for(i in doc.ranks){
+				Tier=doc.ranks[i];
+				//$("#out").append(Tier.name+": ");
+				for(j in Tier.challenges){
+					challenge=Tier.challenges[j];
+					name=challenge.name.replace(/&./ig,'');
+					icon=challenge.displayItem+"";
+					if(icon.indexOf(":")==-1)icon+=":0";
+					icon=window.micon[icon].icon;
+					rewardtext=challenge.reward.text;
+					rewardcur=challenge.reward.currency;
+					rewardxp=challenge.reward.xp;
+
+					//require
+					requirestr="";
+					
+					rrequirestr="";
+
+					if(challenge.type=="onIsland"){
+
+						if(challenge.radius==undefined)challenge.radius=10;
+							requirestr="在岛屿上，半径"+challenge.radius+"的范围内有：";
+					}
+					if(challenge.type=="onPlayer"||challenge.type=="onIsland"){
+						if(challenge.requiredItems!=undefined)
+						requiredItems=challenge.requiredItems.split(" ");
+						else requiredItems=null;
+						for(k in requiredItems){
+							rt=requiredItems[k].split(";")[0];
+							rr=requiredItems[k].split(";")[1];
+							if(rr==undefined)rr=0;
+							tt=rt.split(":");
+							if(tt.length==2){
+								num=tt[1];
+								id=tt[0]+":0";
+							}
+							else{
+								num=tt[2];
+								id=tt[0]+":"+tt[1];
+							}
+							eval("unl=window.ids.match(/^"+id+",.*, (.*)$/m)");
+							if(unl==undefined){
+								eval("unl=window.ids.match(/^"+tt[0]+",.*, (.*)$/m)");
+							}
+							unl=unl[1];
+							eval("iname=window.zhcn.match(/(tile|item)\."+unl+"\.name=(.*)$/m)");
+							iname=iname[2];
+							requirestr+=num+"x"+iname+"<br>";
+							if(rr!=0)rrequirestr+=rr+"x"+iname+"<br>";
+						}
+					}else if(challenge.type=="islandLevel"){
+						requirestr="空岛等级："+challenge.requiredItems;
+					}
+					//require end
+					if(challenge.type=="onPlayer"){
+						chatype="消耗物品";
+					}else if(challenge.type=="islandLevel"){
+						chatype="空岛等级";
+					}else if(challenge.type=="onIsland"){
+						chatype="空岛方块";
+					}
+					if(challenge.repeatReward!=undefined&&challenge.repeatReward.items!=undefined){
+						rrewardtext=challenge.repeatReward.text;
+						rrewardcur=challenge.repeatReward.currency;
+						rrewardxp=challenge.repeatReward.xp;
+						repeat='<div class="tb">'+'</div>\
+							<div class="tb">'+rrewardtext+'</div>\
+							<div class="tb">'+'aaa</div>\
+							<div class="tb">'+rrewardcur+'</div>\
+							<div class="tb">'+rrewardxp+'</div>';
+					}else{
+						repeat='<div class="tb" style="width:100%;text-align:center">不可重复完成！</div>';
+					}
+					if(challenge.repeatReward!=undefined&&challenge.repeatReward.items!=undefined)
+						$("#out").append('<ul class="list-group my-3 col-6">\
+										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
+										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
+										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
+										  <div class="col-2"><span class="badge badge-primary badge-pill">可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
+										  <li class="list-group-item list-group-item-action"><div class="row">\
+										  <div class="col-6">任务需求：<br>'+requirestr+'</div>\
+										  <div class="col-6">重复惩罚：<br>'+rrequirestr+'</div></div></li>\
+										  <li class="list-group-item list-group-item-action"><div class="row">\
+										  <div class="col-6">奖励提示：<br>'+challenge.reward.text+'</div>\
+										  <div class="col-6">重复奖励提示：<br>'+challenge.repeatReward.text+'</div></div></li>\
+										  <li class="list-group-item list-group-item-action">Vestibulum at eros</li>\
+										</ul>')
+					else
+						$("#out").append('<ul class="list-group my-3 col-6">\
+										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
+										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
+										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
+										  <div class="col-2"><span class="badge badge-primary badge-pill">不可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
+										  <li class="list-group-item list-group-item-action">任务需求：<br>'+requirestr+'</li>\
+										  <li class="list-group-item list-group-item-action">奖励提示：'+challenge.reward.text+'</li>\
+										  <li class="list-group-item list-group-item-action">Vestibulum at eros</li>\
+										</ul>')
+					/*$("#out").append('<div class="row">\
+										<div><div class="tb"><img src="data:image/png;base64,'+icon+'"/></div></div>\
+										<div><div class="tb">'+name+'<br>'+j+'</div></div>\
+										<div><div class="tb irow">\
+											<div class="tb">'+requirestr+'</div>\
+											<div class="tb">'+rewardtext+'</div>\
+											<div class="tb">'+'</div>\
+											<div class="tb">'+rewardcur+'</div>\
+											<div class="tb">'+rewardxp+'</div>\
+										</div><div class="tb irow">'+repeat+'\
+										</div></div>\
+									</div>');*/
+
+				}
+				//$("#out").append("<br>");
+			}
+		}
+	}
+</script>
+<body>
+<div class="container">
+	<div class="row" id="out">
+	</div>
+</div>
