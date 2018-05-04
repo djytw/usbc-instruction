@@ -89,6 +89,75 @@
 						requirestr="空岛等级："+challenge.requiredItems;
 					}
 					//require end
+					//reward start
+					re=challenge.reward.items;
+					rewarditem="";
+					for(k in re){
+						p=re[k].match(/\{p=(.*)\}/);
+						if(p!=null)p=p[1];
+						else p=1;
+						p*=100;
+						len=re[k].split(":");
+						if(len.length==3){
+							id=re[k].match(/(\d+:\d+):(\d+)/);
+							id2=re[k].match(/(\d+):\d+:(\d+)/);
+							num=id[2];
+							id=id[1];
+							id2=id2[1];
+						}else{
+							id=re[k].match(/(\d+):(\d+)/);
+							num=id[2];
+							id2=id[1];
+							id=id2+":0";
+						}
+						//get ok translate
+						eval("unl=window.ids.match(/^"+id+",.*, (.*)$/m)");
+						if(unl==undefined){
+							eval("unl=window.ids.match(/^"+id2+",.*, (.*)$/m)");
+						}
+						unl=unl[1];
+						eval("iname=window.zhcn.match(/(tile|item)\."+unl+"\.name=(.*)$/m)");
+						iname=iname[2];
+						rewarditem+=num+"x"+iname;
+						if(p!=100)rewarditem+="(可能性"+p+"%)";
+						rewarditem+="<br>";
+					}					
+					if(challenge.repeatReward!=undefined&&challenge.repeatReward.items!=undefined){
+						//repeatreward start
+						re=challenge.repeatReward.items;
+						rrewarditem="";
+						for(k in re){
+							p=re[k].match(/\{p=(.*)\}/);
+							if(p!=null)p=p[1];
+							else p=1;
+							p*=100;
+							len=re[k].split(":");
+							if(len.length==3){
+								id=re[k].match(/(\d+:\d+):(\d+)/);
+								id2=re[k].match(/(\d+):\d+:(\d+)/);
+								num=id[2];
+								id=id[1];
+								id2=id2[1];
+							}else{
+								id=re[k].match(/(\d+):(\d+)/);
+								num=id[2];
+								id2=id[1];
+								id=id2+":0";
+							}
+							//get ok translate
+							eval("unl=window.ids.match(/^"+id+",.*, (.*)$/m)");
+							if(unl==undefined){
+								eval("unl=window.ids.match(/^"+id2+",.*, (.*)$/m)");
+							}
+							unl=unl[1];
+							eval("iname=window.zhcn.match(/(tile|item)\."+unl+"\.name=(.*)$/m)");
+							iname=iname[2];
+							rrewarditem+=num+"x"+iname;
+							if(p!=100)rrewarditem+="(可能性"+p+"%)";
+							rrewarditem+="<br>";
+						}
+						//rreward end
+					}
 					if(challenge.type=="onPlayer"){
 						chatype="消耗物品";
 					}else if(challenge.type=="islandLevel"){
@@ -109,28 +178,30 @@
 						repeat='<div class="tb" style="width:100%;text-align:center">不可重复完成！</div>';
 					}
 					if(challenge.repeatReward!=undefined&&challenge.repeatReward.items!=undefined)
-						$("#out").append('<ul class="list-group my-3 col-6">\
+						$("#out").append('<ul class="list-group my-3 col-lg-6 col-sm-12">\
 										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
 										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
 										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
 										  <div class="col-2"><span class="badge badge-primary badge-pill">可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
 										  <li class="list-group-item list-group-item-action"><div class="row">\
-										  <div class="col-6">任务需求：<br>'+requirestr+'</div>\
-										  <div class="col-6">重复惩罚：<br>'+rrequirestr+'</div></div></li>\
+										  <div class="col-6"><strong>任务需求：</strong><br>'+requirestr+'</div>\
+										  <div class="col-6"><strong>重复惩罚：</strong><br>'+rrequirestr+'</div></div></li>\
 										  <li class="list-group-item list-group-item-action"><div class="row">\
-										  <div class="col-6">奖励提示：<br>'+challenge.reward.text+'</div>\
-										  <div class="col-6">重复奖励提示：<br>'+challenge.repeatReward.text+'</div></div></li>\
-										  <li class="list-group-item list-group-item-action">Vestibulum at eros</li>\
+										  <div class="col-6"><strong>奖励提示：</strong><br>'+challenge.reward.text+'</div>\
+										  <div class="col-6"><strong>重复奖励提示：</strong><br>'+challenge.repeatReward.text+'</div></div></li>\
+										  <li class="list-group-item list-group-item-action"><div class="row">\
+										  <div class="col-6"><strong>实际奖励：</strong><br>'+rewarditem+'</div>\
+										  <div class="col-6"><strong>实际重复奖励：</strong><br>'+rrewarditem+'</div></div></li>\
 										</ul>')
 					else
-						$("#out").append('<ul class="list-group my-3 col-6">\
+						$("#out").append('<ul class="list-group my-3 col-lg-6 col-sm-12">\
 										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
 										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
 										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
 										  <div class="col-2"><span class="badge badge-primary badge-pill">不可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
-										  <li class="list-group-item list-group-item-action">任务需求：<br>'+requirestr+'</li>\
-										  <li class="list-group-item list-group-item-action">奖励提示：'+challenge.reward.text+'</li>\
-										  <li class="list-group-item list-group-item-action">Vestibulum at eros</li>\
+										  <li class="list-group-item list-group-item-action"><strong>任务需求：</strong><br>'+requirestr+'</li>\
+										  <li class="list-group-item list-group-item-action"><strong>奖励提示：</strong>'+challenge.reward.text+'</li>\
+										  <li class="list-group-item list-group-item-action"><strong>实际奖励：</strong><br>'+rewarditem+'</li>\
 										</ul>')
 					/*$("#out").append('<div class="row">\
 										<div><div class="tb"><img src="data:image/png;base64,'+icon+'"/></div></div>\
