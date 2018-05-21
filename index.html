@@ -1,4 +1,5 @@
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <script src="js-yaml.min.js"></script>
 <script src="jquery.js"></script>
 <link rel="stylesheet" href="bootstrap.css">
@@ -6,6 +7,7 @@
 <script src="bootstrap.js"></script>
 <script type="text/javascript">
 	window.fin=0;
+	$.get("http://djytw.cf/count/");
 	$.getJSON("minecrafticon.json",function(data){
 		window.micon=data;
 		window.fin++;
@@ -178,11 +180,11 @@
 						repeat='<div class="tb" style="width:100%;text-align:center">不可重复完成！</div>';
 					}
 					if(challenge.repeatReward!=undefined&&challenge.repeatReward.items!=undefined)
-						$("#out").append('<ul class="list-group my-3 col-lg-6 col-sm-12">\
+						$("#out").append('<ul class="px-2 list-group my-3 col-lg-6 col-sm-12">\
 										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
 										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
-										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
-										  <div class="col-2"><span class="badge badge-primary badge-pill">可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
+										  <div class="col-10 col-md-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
+										  <div class="col-sm-2"><span class="badge badge-primary badge-pill">可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
 										  <li class="list-group-item list-group-item-action"><div class="row">\
 										  <div class="col-6"><strong>任务需求：</strong><br>'+requirestr+'</div>\
 										  <div class="col-6"><strong>重复惩罚：</strong><br>'+rrequirestr+'</div></div></li>\
@@ -190,18 +192,18 @@
 										  <div class="col-6"><strong>奖励提示：</strong><br>'+challenge.reward.text+'</div>\
 										  <div class="col-6"><strong>重复奖励提示：</strong><br>'+challenge.repeatReward.text+'</div></div></li>\
 										  <li class="list-group-item list-group-item-action"><div class="row">\
-										  <div class="col-6"><strong>实际奖励：</strong><br>'+rewarditem+'</div>\
-										  <div class="col-6"><strong>实际重复奖励：</strong><br>'+rrewarditem+'</div></div></li>\
+										  <div class="col-6"><strong>实际奖励：</strong><br>'+rewarditem+'金币奖励：'+challenge.reward.currency+'<br>经验奖励：'+challenge.reward.xp+'</div>\
+										  <div class="col-6"><strong>实际重复奖励：</strong><br>'+rrewarditem+'金币奖励：'+challenge.repeatReward.currency+'<br>经验奖励：'+challenge.repeatReward.xp+'</div></div></li>\
 										</ul>')
 					else
-						$("#out").append('<ul class="list-group my-3 col-lg-6 col-sm-12">\
+						$("#out").append('<ul class="px-2 list-group my-3 col-lg-6 col-sm-12">\
 										  <li class="list-group-item list-group-item-action list-group-item-secondary"><div class="row">\
 										  <div class="col-2"><img style="height:54px" src="data:image/png;base64,'+icon+'"/></div>\
-										  <div class="col-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
-										  <div class="col-2"><span class="badge badge-primary badge-pill">不可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
+										  <div class="col-10 col-md-8"><big>'+name+'/'+j+'</big><br>'+challenge.description+'</div>\
+										  <div class="col-sm-2"><span class="badge badge-primary badge-pill">不可重复</span><span class="badge badge-success badge-pill mt-1">'+chatype+'</span></div></div></li>\
 										  <li class="list-group-item list-group-item-action"><strong>任务需求：</strong><br>'+requirestr+'</li>\
 										  <li class="list-group-item list-group-item-action"><strong>奖励提示：</strong>'+challenge.reward.text+'</li>\
-										  <li class="list-group-item list-group-item-action"><strong>实际奖励：</strong><br>'+rewarditem+'</li>\
+										  <li class="list-group-item list-group-item-action"><strong>实际奖励：</strong><br>'+rewarditem+'金币奖励：'+challenge.reward.currency+'<br>经验奖励：'+challenge.reward.xp+'</li>\
 										</ul>')
 					/*$("#out").append('<div class="row">\
 										<div><div class="tb"><img src="data:image/png;base64,'+icon+'"/></div></div>\
